@@ -44,4 +44,4 @@ ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
 
 [project.scripts]
-haystack = "haystack.cli:main"
+haystack = "haystack.run:unit_test"
