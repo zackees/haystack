@@ -28,23 +28,33 @@ def find_plus_context(
         buffer: list[str] = []
         current_file: str | None = None
 
-        for line in process.stdout:
-            if line.startswith("--"):
-                if buffer and current_file:
-                    yield SearchResult(filename=current_file, lines=buffer.copy())
-                    buffer.clear()
-                    current_file = None
-            else:
-                # Parse the filename and content
-                parts = line.split(":", 1)
-                # print(parts)
-                if len(parts) >= 2:
-                    if not current_file:
-                        current_file = parts[0]
-                buffer.append(line.rstrip())
+        try:
+            for line in process.stdout:
+                try:
+                    if line.startswith("--"):
+                        if buffer and current_file:
+                            yield SearchResult(
+                                filename=current_file, lines=buffer.copy()
+                            )
+                            buffer.clear()
+                            current_file = None
+                    else:
+                        # Parse the filename and content
+                        parts = line.split(":", 1)
+                        if len(parts) >= 2:
+                            if not current_file:
+                                current_file = parts[0]
+                        buffer.append(line.rstrip())
+                except UnicodeDecodeError:
+                    print("Skipping line due to Unicode decoding error")
+                    continue
 
-        if buffer and current_file:
-            yield SearchResult(filename=current_file, lines=buffer.copy())
+            if buffer and current_file:
+                yield SearchResult(filename=current_file, lines=buffer.copy())
+        except Exception as e:
+            print(f"Error processing ripgrep output: {e}")
+            process.kill()
+            return None
 
         process.wait()
         if (
