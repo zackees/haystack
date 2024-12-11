@@ -5,7 +5,7 @@ Unit test file.
 import unittest
 from pathlib import Path
 
-from haystack.run import find_plus_context
+from haystack.run import double_search, find_plus_context
 
 HERE = Path(__file__).parent.resolve()
 TEST_DIR = HERE / "test_data"
@@ -20,6 +20,10 @@ class MainTester(unittest.TestCase):
 
     def test_other(self) -> None:
         for result in find_plus_context("test", Path.cwd()):
+            print(result)
+
+    def test_blah(self) -> None:
+        for result in double_search("test", "this"):
             print(result)
 
 
