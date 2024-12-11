@@ -18,7 +18,7 @@ def find_plus_context(
             rg_command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True,
+            text=False,
             cwd=start_dir,
         )
 
@@ -29,7 +29,15 @@ def find_plus_context(
         current_file: str | None = None
 
         try:
-            for line in process.stdout:
+            # for line in process.stdout:
+            line_bytes: bytes | None = None
+            line: str
+            for line_bytes in process.stdout:
+                try:
+                    line = line_bytes.decode("utf-8")
+                except UnicodeDecodeError:
+                    print("Skipping line due to Unicode decoding error")
+                    continue
                 try:
                     if line.startswith("--"):
                         if buffer and current_file:
