@@ -21,6 +21,7 @@ class MainTester(unittest.TestCase):
 
     def test_imports(self) -> None:
         """Test command line interface (CLI)."""
+        print(f"Running command: {COMMAND}")
         rtn = os.system(COMMAND)
         self.assertEqual(0, rtn)
 
