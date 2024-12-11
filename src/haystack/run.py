@@ -47,6 +47,15 @@ def double_search(
         else:
             yield result
 
+    for result in find_plus_context(q2, start_dir, context_lines=context_lines):
+        # print(result)
+        if q1:
+            term_in_at_least_one_line = any(line for line in result.lines if q1 in line)
+            if term_in_at_least_one_line:
+                yield result
+        else:
+            yield result
+
     return None
 
 
