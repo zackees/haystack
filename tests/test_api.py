@@ -15,15 +15,17 @@ assert TEST_DIR.exists(), f"Test directory not found: {TEST_DIR}"
 assert TEXT_TXT.exists(), f"Test file not found: {TEXT_TXT}"
 
 
-class MainTester(unittest.TestCase):
+class ApiTester(unittest.TestCase):
     """Main tester class."""
 
     def test_other(self) -> None:
-        for result in find_plus_context("test", Path.cwd()):
+        for result in find_plus_context("test", start_dir=TEST_DIR, context_lines=20):
             print(result)
 
     def test_blah(self) -> None:
-        for result in double_search("test", "this"):
+        for result in double_search(
+            "test", "this", start_dir=TEST_DIR, context_lines=20
+        ):
             print(result)
 
 

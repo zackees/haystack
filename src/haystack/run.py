@@ -16,28 +16,22 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Refined Search Tool with ripgrep and fzf"
     )
+    parser.add_argument("directory", nargs="?", help="Directory to search")
     parser.add_argument("--term1", help="First search term")
     parser.add_argument("--term2", help="Second search term")
     return parser.parse_args()
 
 
-def single_phase() -> None:
-    for index, result in enumerate(find_plus_context("test", Path.cwd())):
-        s = str(result)
-        o = f"[{index}]: {s}"
-        print(o)
-
-
 def double_search(
-    q1: str, q2: str, start_dir: Path = Path.cwd()
+    q1: str, q2: str, start_dir: Path = Path.cwd(), context_lines: int = 20
 ) -> Generator[SearchResult, None, None]:
     if not q1:
         print("Error: First search term (--term1) is required.")
         return None
 
     second_regex = re.compile(q2)
-    for result in find_plus_context(q1, start_dir):
-        print(result)
+    for result in find_plus_context(q1, start_dir, context_lines=context_lines):
+        # print(result)
         if q2:
             term_in_at_least_one_line = any(
                 second_regex.search(line) for line in result.lines
@@ -50,13 +44,26 @@ def double_search(
     return None
 
 
-def unit_test() -> None:
-    # Simulate command-line arguments for testing
-    import sys
+def promptYn(msg) -> bool:
+    while True:
+        response = input(msg).strip().lower()
+        if response in ["y", "n"]:
+            return response == "y"
+        print("Please enter 'y' or 'n'.")
+        continue
 
-    sys.argv = ["haystack", "--term1", "test", "--term2", "this"]
-    double_search("test", "this")
+
+def main() -> None:
+    # Simulate command-line arguments for testing
+    args = parse_args()
+    directory = args.directory or Path.cwd()
+    if not args.term1:
+        args.term1 = input("1st Search term: ").strip()
+    if not args.term2:
+        args.term2 = input("2nd Search term: ").strip()
+    for result in double_search(args.term1, args.term2, start_dir=directory):
+        print(result)
 
 
 if __name__ == "__main__":
-    unit_test()
+    main()

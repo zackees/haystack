@@ -6,7 +6,7 @@ from haystack.types import SearchResult
 
 
 def find_plus_context(
-    term: str, start_dir: Path, context_lines: int = 3
+    term: str, start_dir: Path, context_lines: int
 ) -> Generator[SearchResult, None, None]:
     """Generator that yields each ripgrep result with its context one at a time"""
     rg_command = ["rg", "-C", str(context_lines), term]
@@ -41,9 +41,7 @@ def find_plus_context(
                 if len(parts) >= 2:
                     if not current_file:
                         current_file = parts[0]
-                    buffer.append(parts[1].rstrip())
-                else:
-                    buffer.append(line.rstrip())
+                buffer.append(line.rstrip())
 
         if buffer and current_file:
             yield SearchResult(filename=current_file, lines=buffer.copy())
