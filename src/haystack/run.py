@@ -19,6 +19,12 @@ def parse_args():
     parser.add_argument("directory", nargs="?", help="Directory to search")
     parser.add_argument("--term1", help="First search term")
     parser.add_argument("--term2", help="Second search term")
+    parser.add_argument(
+        "--lines",
+        type=int,
+        default=20,
+        help="Number of context lines to show (default: 20)",
+    )
     return parser.parse_args()
 
 
@@ -61,7 +67,9 @@ def main() -> None:
         args.term1 = input("1st Search term: ").strip()
     if not args.term2:
         args.term2 = input("2nd Search term: ").strip()
-    for result in double_search(args.term1, args.term2, start_dir=directory):
+    for result in double_search(
+        args.term1, args.term2, start_dir=directory, context_lines=args.lines
+    ):
         print(result)
 
 
